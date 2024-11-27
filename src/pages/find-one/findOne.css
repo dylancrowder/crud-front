@@ -1,0 +1,75 @@
+/* Basic container styles */
+.search-container {
+  width: 400px;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ctn-findOne {
+  display: flex;
+  flex-direction: column;
+}
+
+.searchbar-cnt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Input field style */
+.input-field {
+  width: 400px;
+  padding: 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+  background-color: #d2d3d241;
+  margin-right: 8px;
+}
+
+/* Button style */
+.search-button {
+  border: none;
+  padding: 12px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  background-color: var(--button-color-green);
+}
+
+.search-button:disabled {
+  background-color: #ccc;
+}
+
+/* Status text styles */
+.search-status {
+  font-size: var(--font-size-messages);
+  color: #555;
+}
+
+/* Error message style */
+.error-message {
+  color: var(--warning-color);
+  font-size: var(--font-size-messages);
+}
+
+/* Success message style */
+.success-message {
+  color: var(--susses-color);
+  font-size: var(--font-size-messages);
+  margin-top: 10px;
+}
+
+.product-cnt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid white;
+  padding: 40px;
+  margin-top: 40px;
+  border-radius: 4px;
+}

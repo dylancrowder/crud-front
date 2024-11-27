@@ -1,0 +1,8 @@
+:root {
+  --warning-color: #dc3545;
+  --button-color-green: #1cb10f;
+  --success-color-hover: #11520f;
+  --font-size-messages: 1rem;
+  --success-color-message: #28a745;
+  --input-border-focus: #007bff;
+}
