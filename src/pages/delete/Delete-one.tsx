@@ -6,59 +6,59 @@ const DeleteOne: React.FC = () => {
   const [query, setQuery] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleInputChange = (event: any) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10);
-    if (isNaN(value)) {
-      setQuery(0);
-    } else {
-      setQuery(value);
-    }
+    setQuery(!isNaN(value) && value > 0 ? value : null);
   };
 
-  const handleSearch = async () => {
-    setData(null);
-    setLoading(true);
+  const handleDelete = async () => {
+    setSuccessMessage(null);
     setError(null);
 
+    if (query === null) {
+      setError("Por favor, ingrese un ID válido.");
+      return;
+    }
+
+    setLoading(true);
     try {
       const response = await axios.delete("http://localhost:8090/api/delete-one", {
         data: { id: query },
       });
-      console.log(response.data);
-      setData(response.data);
+      setSuccessMessage(response.data.message || "El artículo se eliminó correctamente.");
     } catch (err: any) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.message || "Error desconocido.");
-      } else {
-        setError("Error al conectar con el servidor.");
-      }
+      console.error(err);
+      setError(
+        err.response?.data?.message || "Error al conectar con el servidor. Intente nuevamente."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container >
+    <Container>
       <h1 className="title">Eliminar Artículo</h1>
       <Row className="justify-content-center">
-
-        <Col >
+        <Col>
           <Form className="mb-5">
-            <Form.Group controlId="formSearch">
-              <Form.Label>Buscar por ID</Form.Label>
+            <Form.Group controlId="formDelete">
+              <Form.Label>Eliminar por ID</Form.Label>
               <div className="d-flex">
                 <Form.Control
                   type="number"
-                  value={query === null ? "" : query}
+           
+                  value={query ?? ""}
                   onChange={handleInputChange}
                   placeholder="Ingrese el ID del artículo"
                   className="p-2"
+                  aria-label="ID del artículo a eliminar"
                 />
                 <Button
                   variant="danger"
-                  onClick={handleSearch}
+                  onClick={handleDelete}
                   disabled={loading}
                   className="ms-3"
                 >
@@ -68,28 +68,10 @@ const DeleteOne: React.FC = () => {
             </Form.Group>
           </Form>
 
-          {/* Mostrar los resultados de búsqueda */}
+          {/* Mensajes de éxito o error */}
           <div className="mt-4">
-            {data ? (
-              Array.isArray(data) && data.length > 0 ? (
-                data.map((articulo: any, index: number) => (
-                  <div key={index} className="border p-3 mb-3">
-                    <h5>Nombre: {articulo.NOMBRE}</h5>
-                    <h6>Marca: {articulo.MARCA}</h6>
-                    <p>
-                      <strong>Fecha de Modificación:</strong>{" "}
-                      {new Date(articulo.FECHA_MODIFICACION).toLocaleDateString()}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <Alert variant="info">No se encontraron artículos con ese ID.</Alert>
-              )
-            ) : error ? (
-              <Alert variant="danger">{error}</Alert>
-            ) : (
-              <p className="text-center text-muted">Elimina algún producto</p>
-            )}
+            {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+            {successMessage && <Alert variant="success" className="mt-3">{successMessage}</Alert>}
           </div>
         </Col>
       </Row>
