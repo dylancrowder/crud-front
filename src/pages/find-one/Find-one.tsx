@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./findOne.css";
+import { Button, Form, Alert, Container, Row, Col } from "react-bootstrap";
 
 const Search: React.FC = () => {
   const [query, setQuery] = useState<number | null>(null);
@@ -23,7 +23,7 @@ const Search: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/find-one", {
+      const response = await axios.post("http://localhost:8090/api/find-one", {
         id: query,
       });
       console.log(response.data);
@@ -40,53 +40,61 @@ const Search: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="ctn-findOne">
-        <div className="search-container">
-          <h1 className="create-title">Buscar Artículo</h1>
-          <div className="searchbar-cnt">
-            <input
-              type="number"
-              value={query === null ? "" : query}
-              onChange={handleInputChange}
-              placeholder="Buscar por ID"
-              className="input-field"
-            />
-            <button
-              onClick={handleSearch}
-              disabled={loading}
-              className="search-button"
-            >
-              {loading ? "Buscando..." : "Buscar"}
-            </button>
-          </div>
-        </div>
+    <Container >
+      <Row className="justify-content-center">
+        <Col >
+          <h1 className="title">Buscar Artículo</h1>
 
-        {/* Renderizamos los artículos si data existe y tiene contenido */}
-        <div className="product-cnt">
-          {data ? (
-            Array.isArray(data) && data.length > 0 ? (
-              data.map((articulo: any, index: number) => (
-                <div key={index} className="product-item">
-                  <h3>Nombre: {articulo.NOMBRE}</h3>
-                  <h3>Marca: {articulo.MARCA}</h3>
-                  <h3>
-                    Fecha de Modificación:{" "}
-                    {new Date(articulo.FECHA_MODIFICACION).toLocaleDateString()}
-                  </h3>
-                </div>
-              ))
+          {/* Formulario de búsqueda */}
+          <Form>
+            <Form.Group controlId="formSearch">
+              <Form.Label>Buscar por ID</Form.Label>
+              <div className="d-flex">
+                <Form.Control
+                  type="number"
+                  value={query === null ? "" : query}
+                  onChange={handleInputChange}
+                  placeholder="Ingrese el ID del artículo"
+                  className="p-2"
+                />
+                <Button
+                  variant="primary"
+                  onClick={handleSearch}
+                  disabled={loading}
+                  className="ms-3"
+                >
+                  {loading ? "Buscando..." : "Buscar"}
+                </Button>
+              </div>
+            </Form.Group>
+          </Form>
+
+          {/* Mostrar resultados o error */}
+          <div className="mt-4">
+            {data ? (
+              Array.isArray(data) && data.length > 0 ? (
+                data.map((articulo: any, index: number) => (
+                  <div key={index} className="border p-3 mb-3">
+                    <h5>Nombre: {articulo.NOMBRE}</h5>
+                    <h6>Marca: {articulo.MARCA}</h6>
+                    <p>
+                      <strong>Fecha de Modificación:</strong>{" "}
+                      {new Date(articulo.FECHA_MODIFICACION).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <Alert variant="info">No se encontraron artículos con ese ID.</Alert>
+              )
+            ) : error ? (
+              <Alert variant="danger">{error}</Alert>
             ) : (
-              <p>No se encontraron artículos con ese ID.</p>
-            )
-          ) : error ? (
-            <p className="error-message">{error}</p>
-          ) : (
-            <p>Busca algun producto</p>
-          )}
-        </div>
-      </div>
-    </>
+              <p className="text-center text-muted">Busca algún producto</p>
+            )}
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

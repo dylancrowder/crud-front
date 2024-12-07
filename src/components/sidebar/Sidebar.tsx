@@ -1,3 +1,4 @@
+import { Button, Stack } from "react-bootstrap";
 import "./sidebar.css";
 
 export function Sidebar({
@@ -14,15 +15,20 @@ export function Sidebar({
 
   return (
     <div className="sidebar-cnt">
-      {actions.map((action) => (
-        <button
-          key={action.view}
-          className="btn"
-          onClick={() => onViewChange(action.view)}
-        >
-          {action.label}
-        </button>
-      ))}
+
+      <Stack gap={3}>
+        {actions.map((action) => (
+          <Button
+            key={action.view}
+            className="p-2"
+            variant="primary"
+            onClick={() => onViewChange(action.view)}
+          >
+            {action.label}
+          </Button>
+        ))}
+      </Stack>
+
     </div>
   );
 }

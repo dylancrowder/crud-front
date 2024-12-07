@@ -1,6 +1,7 @@
-import "./create.css";
 import React, { useState } from "react";
 import axios from "axios";
+import { Button, Form, Alert } from "react-bootstrap";
+import "./create.css";
 
 const CreateArticle: React.FC = () => {
   const [nombre, setNombre] = useState<string>("");
@@ -16,10 +17,10 @@ const CreateArticle: React.FC = () => {
     setSuccessMessage(null);
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/create-article",
-        { nombre, marca }
-      );
+      const response = await axios.post("http://localhost:8090/api/create-article", {
+        nombre,
+        marca,
+      });
       setSuccessMessage(response.data.message);
       setNombre("");
       setMarca("");
@@ -35,41 +36,38 @@ const CreateArticle: React.FC = () => {
   };
 
   return (
-    <div className="create-cnt">
-      <h1 className="create-title">Crear Artículo</h1>
-      <form className="create-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label" htmlFor="nombre">
-            Nombre:
-          </label>
-          <input
-            className="form-input"
+    <div className="container" >
+      <h1 className="title">Crear Artículo</h1>
+      <Form className="create-form" onSubmit={handleSubmit}>
+        <Form.Group controlId="formNombre" className="mb-3">
+          <Form.Label>Nombre:</Form.Label>
+          <Form.Control
             type="text"
-            id="nombre"
+            placeholder="Ingrese un nombre"
             value={nombre}
-            onChange={(e) => setNombre((e.target as HTMLInputElement).value)}
+            onChange={(e) => setNombre(e.currentTarget.value)}
             required
           />
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="marca">
-            Marca:
-          </label>
-          <input
-            className="form-input"
+        </Form.Group>
+
+        <Form.Group controlId="formMarca" className="mb-3">
+          <Form.Label>Marca:</Form.Label>
+          <Form.Control
             type="text"
-            id="marca"
+            placeholder="Ingrese una marca"
             value={marca}
-            onChange={(e) => setMarca((e.target as HTMLInputElement).value)}
+            onChange={(e) => setMarca(e.currentTarget.value)}
             required
           />
-        </div>
-        <button className="form-button" type="submit" disabled={loading}>
+        </Form.Group>
+
+        <Button variant="success" type="submit" disabled={loading} className="w-100 p-2">
           {loading ? "Creando..." : "Crear"}
-        </button>
-      </form>
-      {error && <p className="form-error">Error: {error}</p>}
-      {successMessage && <p className="form-success">{successMessage}</p>}
+        </Button>
+      </Form>
+
+      {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
+      {successMessage && <Alert variant="success" className="mt-3">{successMessage}</Alert>}
     </div>
   );
 };

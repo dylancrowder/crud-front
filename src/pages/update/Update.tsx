@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Button, Form, Alert } from "react-bootstrap";
+import './update.css';
 
-const Update: React.FC = () => {
+const UpdateArticle: React.FC = () => {
   const [query, setQuery] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<any[] | null>(null);
-  const [formData, setFormData] = useState<any | null>(null); // Datos del formulario
+  const [formData, setFormData] = useState<any | null>(null);
 
   // Manejar el cambio del input de búsqueda
   const handleInputChange = (event: any) => {
@@ -22,7 +24,7 @@ const Update: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/find-one", {
+      const response = await axios.post("http://localhost:8090/api/find-one", {
         id: query,
       });
 
@@ -49,7 +51,7 @@ const Update: React.FC = () => {
     const { name, value } = event.target;
     setFormData((prev: any) => ({
       ...prev,
-      [name]: value, // Actualizar el campo modificado
+      [name]: name === "ESTADO" ? value === "true" : value, // Convertir "true"/"false" a booleano
     }));
   };
 
@@ -62,7 +64,7 @@ const Update: React.FC = () => {
 
     try {
       setLoading(true);
-      await axios.put("http://localhost:8080/api/update-one", updatedFormData); // Se envía el ID en el cuerpo
+      await axios.put("http://localhost:8090/api/update-one", updatedFormData);
       alert("Producto actualizado correctamente.");
     } catch (err: any) {
       if (err.response && err.response.data) {
@@ -76,99 +78,88 @@ const Update: React.FC = () => {
   };
 
   return (
-    <div className="ctn-findOne">
-      <div className="search-container">
-        <h1 className="create-title">Actualizar Artículo</h1>
-        <div className="searchbar-cnt">
-          <input
-            type="number"
-            value={query === null ? "" : query}
-            onChange={handleInputChange}
-            placeholder="Buscar por ID"
-            className="input-field"
-          />
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="search-button"
-          >
-            {loading ? "Buscando..." : "Buscar"}
-          </button>
-        </div>
-      </div>
+    <div className="container">
+      <h1 className="title">Actualizar Artículo</h1>
 
-      {/* Mostrar errores o datos */}
-      {error && <p className="error-message">{error}</p>}
+      {/* Buscar artículo por ID */}
+      <Form className="mb-5">
+        <Form.Group controlId="searchInput">
+          <Form.Label>Buscar por ID:</Form.Label>
+          <div className="d-flex align-items-center">
+            <Form.Control
+              type="number"
+              value={query === null ? "" : query}
+              onChange={handleInputChange}
+              placeholder="Ingrese el ID del artículo"
+              className="p-2"
+            />
+            <Button
+              onClick={handleSearch}
+              disabled={loading}
+              variant="success"
+              className="ms-3"
+            >
+              {loading ? "Buscando..." : "Buscar"}
+            </Button>
+          </div>
+        </Form.Group>
+      </Form>
+
+      {/* Mostrar errores */}
+      {error && <Alert variant="danger">{error}</Alert>}
 
       {/* Formulario editable */}
       {formData && (
-        <form className="update-form">
-          <div className="form-group">
-            <label htmlFor="NOMBRE">Nombre</label>
-            <input
+        <Form className="update-form" onSubmit={(e) => e.preventDefault()}>
+          <Form.Group controlId="formNombre" className="mb-3">
+            <Form.Label>Nombre:</Form.Label>
+            <Form.Control
               type="text"
               name="NOMBRE"
-              id="NOMBRE"
               value={formData.NOMBRE || ""}
               onChange={handleFormChange}
-              className="input-field"
+              placeholder="Ingrese el nombre del artículo"
+              required
             />
-          </div>
+          </Form.Group>
 
-          <div className="form-group">
-            <label htmlFor="MARCA">Marca</label>
-            <input
+          <Form.Group controlId="formMarca" className="mb-3">
+            <Form.Label>Marca:</Form.Label>
+            <Form.Control
               type="text"
               name="MARCA"
-              id="MARCA"
               value={formData.MARCA || ""}
               onChange={handleFormChange}
-              className="input-field"
+              placeholder="Ingrese la marca"
+              required
             />
-          </div>
+          </Form.Group>
 
-          <div className="form-group">
-            <label htmlFor="ESTADO">Estado</label>
-            <input
-              type="number"
+          <Form.Group controlId="formEstado" className="mb-3">
+            <Form.Label>Estado:</Form.Label>
+            <Form.Control
+              as="select"
               name="ESTADO"
-              id="ESTADO"
-              value={formData.ESTADO || ""}
+              value={formData.ESTADO === true ? "true" : formData.ESTADO === false ? "false" : ""}
               onChange={handleFormChange}
-              className="input-field"
-            />
-          </div>
+            >
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </Form.Control>
+          </Form.Group>
 
-          <div className="form-group">
-            <label htmlFor="FECHA_MODIFICACION">Fecha de Modificación</label>
-            <input
-              type="date"
-              name="FECHA_MODIFICACION"
-              id="FECHA_MODIFICACION"
-              value={
-                formData.FECHA_MODIFICACION
-                  ? new Date(formData.FECHA_MODIFICACION)
-                      .toISOString()
-                      .split("T")[0]
-                  : ""
-              }
-              onChange={handleFormChange}
-              className="input-field"
-            />
-          </div>
-
-          <button
-            type="button"
+          <Button
+            variant="success"
             onClick={handleUpdate}
             disabled={loading}
-            className="update-button"
+            className="w-100 p-2 mt-3"
           >
             {loading ? "Actualizando..." : "Actualizar"}
-          </button>
-        </form>
+          </Button>
+        </Form>
       )}
     </div>
   );
 };
 
-export default Update;
+export default UpdateArticle;
