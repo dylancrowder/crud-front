@@ -9,7 +9,7 @@ const DeleteOne: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value, 10);
+    const value = parseInt((event.target as HTMLInputElement).value, 10);
     setQuery(!isNaN(value) && value > 0 ? value : null);
   };
 
@@ -49,7 +49,7 @@ const DeleteOne: React.FC = () => {
               <div className="d-flex">
                 <Form.Control
                   type="number"
-           
+
                   value={query ?? ""}
                   onChange={handleInputChange}
                   placeholder="Ingrese el ID del artículo"
