@@ -7,21 +7,21 @@ const UpdateArticle: React.FC = () => {
   const [query, setQuery] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null); // Estado para el mensaje de éxito
   const [data, setData] = useState<any[] | null>(null);
   const [formData, setFormData] = useState<any | null>(null);
 
-  // Manejar el cambio del input de búsqueda
   const handleInputChange = (event: any) => {
     const value = parseInt(event.target.value, 10);
     setQuery(isNaN(value) ? 0 : value);
   };
 
-  // Buscar producto por ID
   const handleSearch = async () => {
     setData(null);
     setFormData(null);
-    setLoading(true);
     setError(null);
+    setSuccess(null); // Limpia el mensaje de éxito al buscar
+    setLoading(true);
 
     try {
       const response = await axios.post("http://localhost:8090/api/find-one", {
@@ -46,26 +46,25 @@ const UpdateArticle: React.FC = () => {
     }
   };
 
-  // Manejar los cambios en el formulario
   const handleFormChange = (event: any) => {
     const { name, value } = event.target;
     setFormData((prev: any) => ({
       ...prev,
-      [name]: name === "ESTADO" ? value === "true" : value, // Convertir "true"/"false" a booleano
+      [name]: name === "ESTADO" ? value === "true" : value,
     }));
   };
 
-  // Enviar datos actualizados al servidor
   const handleUpdate = async () => {
     if (!formData) return;
 
-    // Asegúrate de que el ID esté presente en los datos
     const updatedFormData = { ...formData, ID: formData.ID };
 
     try {
       setLoading(true);
+      setError(null); // Limpia errores previos
+      setSuccess(null); // Limpia mensajes de éxito previos
       await axios.put("http://localhost:8090/api/update-one", updatedFormData);
-      alert("Producto actualizado correctamente.");
+      setSuccess("Producto actualizado correctamente."); // Mensaje de éxito
     } catch (err: any) {
       if (err.response && err.response.data) {
         setError(err.response.data.message || "Error desconocido.");
@@ -81,7 +80,6 @@ const UpdateArticle: React.FC = () => {
     <div className="container">
       <h1 className="title">Actualizar Artículo</h1>
 
-      {/* Buscar artículo por ID */}
       <Form className="mb-5">
         <Form.Group controlId="searchInput">
           <Form.Label>Buscar por ID:</Form.Label>
@@ -105,10 +103,10 @@ const UpdateArticle: React.FC = () => {
         </Form.Group>
       </Form>
 
-      {/* Mostrar errores */}
+      {/* Mensajes de error o éxito */}
       {error && <Alert variant="danger">{error}</Alert>}
+      {success && <Alert variant="success">{success}</Alert>}
 
-      {/* Formulario editable */}
       {formData && (
         <Form className="update-form" onSubmit={(e) => e.preventDefault()}>
           <Form.Group controlId="formNombre" className="mb-3">
@@ -158,6 +156,26 @@ const UpdateArticle: React.FC = () => {
           </Button>
         </Form>
       )}
+
+      {/* Mostrar artículos o mensaje */}
+      <div className="mt-4">
+        {data ? (
+          Array.isArray(data) && data.length > 0 ? (
+            data.map((articulo: any, index: number) => (
+              <div key={index} className="border p-3 mb-3">
+                <p>
+                  <strong>Fecha de Modificación:</strong>{" "}
+                  {new Date(articulo.FECHA_MODIFICACION).toLocaleDateString()}
+                </p>
+              </div>
+            ))
+          ) : (
+            <Alert variant="info">No se encontraron artículos con ese ID.</Alert>
+          )
+        ) : (
+          <p className="text-center text-muted">Busca algún producto</p>
+        )}
+      </div>
     </div>
   );
 };

@@ -17,7 +17,7 @@ const CreateArticle: React.FC = () => {
     setSuccessMessage(null);
 
     try {
-      const response = await axios.post("http://localhost:8090/api/create-article", {
+      const response = await axios.post("https://express-start-app.onrender.com/api/create-article", {
         nombre,
         marca,
       });
@@ -26,7 +26,7 @@ const CreateArticle: React.FC = () => {
       setMarca("");
     } catch (err: any) {
       if (err.response && err.response.data) {
-        setError(err.response.data.message || "Error desconocido.");
+        setError(err.response.data.message || "Error desconocido, intenta de nuevo.");
       } else {
         setError("Error al conectar con el servidor.");
       }

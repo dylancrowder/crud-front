@@ -10,7 +10,7 @@ export function Main({ view }: { view: string }) {
       {view === "update" && <Update />}
       {view === "delete" && <DeleteOne />}
       {view === "search" && <Search />}
-      {view === "home" && <p>Bienvenido a la aplicación</p>}
+      {view === "home" && <p className="title-main">Bienvenido a la aplicación</p>}
     </div>
   );
 }
