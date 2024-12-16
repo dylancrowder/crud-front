@@ -24,7 +24,7 @@ const DeleteOne: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await axios.delete("http://localhost:8090/api/delete-one", {
+      const response = await axios.delete("https://express-start-app.onrender.com/api/delete-one", {
         data: { id: query },
       });
       setSuccessMessage(response.data.message || "El artículo se eliminó correctamente.");

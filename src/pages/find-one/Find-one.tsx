@@ -23,7 +23,7 @@ const Search: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:8090/api/find-one", {
+      const response = await axios.post("https://express-start-app.onrender.com/api/find-one", {
         id: query,
       });
       console.log(response.data);
